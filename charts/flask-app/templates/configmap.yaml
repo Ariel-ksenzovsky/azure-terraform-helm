@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flask-config
+data:
+  DB_HOST: "{{ .Values.config.DB_HOST }}"
+  DB_USER: "{{ .Values.config.DB_USER }}"
+  DB_NAME: "{{ .Values.config.DB_NAME }}"
+  FLASK_PORT: "{{ .Values.config.FLASK_PORT }}"
+  init.sql: |
+{{ .Values.initSQL | indent 4 }}

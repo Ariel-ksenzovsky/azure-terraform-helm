@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      containers:
+      - name: flask-app
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.targetPort }}
+        env:
+        - name: DB_HOST
+          value: "{{ .Values.config.DB_HOST }}"
+        - name: DB_NAME
+          value: "{{ .Values.config.DB_NAME }}"
+        - name: PORT
+          value: "{{ .Values.config.FLASK_PORT }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: flask-secrets
+              key: DB_PASSWORD
+        command: ["/bin/sh", "-c", "sleep 10 && python app.py"]
